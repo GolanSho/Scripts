@@ -10,7 +10,7 @@
 ################
 ###   Vars   ###
 
-inetlist=$(nmcli -f DEVICE dev status |tail -n +2)
+inetlist=$(nmcli -f CONNECTION dev status |tail -n +2)
 conlist=$(nmcli -f CONNECTION dev status |tail -n +2)
 modifylist="ip netmask gateway dns broadcast profile exit"
 
@@ -18,7 +18,7 @@ modifylist="ip netmask gateway dns broadcast profile exit"
 
 f_inetc(){
 PS3="please choose Profile "
-
+ 
 select prof in $conlist
         do
  if [ $prof == -- ]; then
@@ -32,10 +32,10 @@ select prof in $conlist
    inetc=$(echo $prof)
  fi 
         break
- 
 done
 }
 f_conadd(){
+PS3="choose ifname"
 read -p "choose type " type
 read -p "choose profile name " con_name
 select ifname in $inetlist 
@@ -47,14 +47,13 @@ nmcli con add type $type con-name $con_name ifname $ifname
 f_conmod(){
 while getopts ":ingdbp" opt; do
   case $opt in
+    n)
+      read -p "prefix netmask: " netmc
+      ;;
     i)
       read -p "ipv4: " ipc
-      nmcli con mod $inetc ipv4.address "$ipc" ipv4.method "manual"
+      nmcli con mod $inetc ipv4.address "$ipc/$netmc" ipv4.method "manual"
       ;;
-    n)
-      read -p "netmask: " netmc
-      nmcli con mod $inetc ... "$netmc" 
-      ;;	
     g)
       read -p "gateway: " gatec
       nmcli con mod $inetc ipv4.gateway "$gatec"
@@ -66,11 +65,11 @@ while getopts ":ingdbp" opt; do
       ;;
     b)
       read -p "broadcast: " brodc
-      nmcli con mod $inetc ... "$brodc"
+      nmcli con mod $inetc ip4 "$brodc"
       ;;
     p)
-      read -p "profile: " profc
-      nmcli con mod $inetc ... "$profc"
+      echo "showing current settings"
+      nmcli con show "$inetc"
       ;;
   esac
 done
