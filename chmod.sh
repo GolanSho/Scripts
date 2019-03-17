@@ -13,7 +13,7 @@ for i in $list
   if [ -d "$fpath$i" ]; then
    chmod 775 "$fpath$i" && echo "Dir Changed"
   elif [ -f "$fpath$i" ]; then
-   chmod 604 "$fpath$i" && echo "File Changed"
+   chmod 664 "$fpath$i" && echo "File Changed"
   else echo "cant change that"
   fi
 done
