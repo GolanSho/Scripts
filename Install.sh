@@ -34,7 +34,7 @@ f_docchk(){
 	systemctl enable docker && systemctl start docker
 }
 
-distros1="centos redhat suse"
+distros1="centos rhel suse"
 distros2="debian ubuntu linuxmint"
 
 f_docchk
@@ -53,8 +53,6 @@ f_docfig(){
 	read -p "Enter NameTag for the image: " tag
 	sudo docker tag $image $tag
 }
-
-
 
 read -p "Create a new docker? y/n " answer
 
