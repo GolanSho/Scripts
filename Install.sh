@@ -48,7 +48,7 @@ f_docfig(){
 	read -p "Choose an image from the list: " image
 	
 	echo "Getting image..."
-	sudo docker run $image
+	sudo docker run $image || exit
 	
 	read -p "Enter NameTag for the image: " tag
 	sudo docker tag $image $tag
@@ -58,13 +58,14 @@ f_docfig(){
 
 read -p "Create a new docker? y/n " answer
 
-if [ $answer = y ]; then
+if [ $answer = y ]; then 
 	f_docfig
+else
+	read -p "Enter dist name: " distro
+	read -p "Enter the tag name: " tag
 fi
 
 f_lampins(){
-	
-	echo "installing Git"
 	
 	for i in $distros1; do
         	if [ $distro = $i ]; then
@@ -74,7 +75,6 @@ f_lampins(){
 
     	for n in $distros2; do
         	if [ $distro = $n ]; then
-            		sudo docker run $tag /usr/bin/apt-get update && apt-get upgrade &> /dev/null
 			installr="apt-get"
         	fi
     	done
@@ -82,12 +82,9 @@ f_lampins(){
 	if [ $distro = fedora ];then
 		installr="dnf"
 	fi	
-	
-	sudo docker run $tag /usr/bin/mkdir /home/git
-	sudo docker run $tag /usr/bin/$installr install -y git && /usr/bin/git clone https://github.com/GolanSho/LAMP_install_PY.git /home/git
-	
-	echo "installing LAMP"
-	sudo docker run $tag /usr/bin/bash /data/LAMP_install_PY/Bashinstall.sh
+
+	echo "installing Git & Lamp"
+	sudo docker run $tag /bin/bash -c "$installr install -y -q git && git clone https://github.com/GolanSho/LAMP_install_PY.git && bash LAMP_install_PY/Bashinstall.sh"
 		
 }
 
